@@ -270,18 +270,20 @@
       border: 3px solid var(--preto);
       background: var(--roxo);
       box-shadow: 4px 4px 0 var(--preto);
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      touch-action: manipulation;
     }
 
-    .photo-frame img {
+    .photo-frame canvas {
+      display: block;
       width: 100%;
       height: 100%;
-      display: block;
-      object-fit: cover;
-      filter: blur(20px) contrast(120%);
-      transform: scale(1.12);
-      transition: filter .6s;
+      background: var(--roxo);
+      -webkit-user-drag: none;
+      pointer-events: none;
     }
-    .photo-frame img.instant { transition: none; }
 
     .photo-sticker {
       position: absolute;
@@ -432,6 +434,49 @@
       text-align: center;
     }
 
+    .photo-diagnostics {
+      position: relative;
+      z-index: 2;
+      width: min(100% - 24px, 860px);
+      margin: 0 auto 72px;
+      padding: 14px;
+      border: 3px solid var(--preto);
+      background: var(--branco);
+      color: var(--preto);
+      box-shadow: var(--sombra);
+    }
+    .photo-diagnostics h2 { margin: 0 0 10px; font-size: 1rem; }
+    .photo-diagnostics p { margin: 0 0 10px; font-size: .75rem; }
+    .photo-diagnostics ul {
+      max-height: 55vh;
+      margin: 0;
+      padding: 0;
+      overflow: auto;
+      list-style: none;
+    }
+    .photo-diagnostics li {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 6px 8px;
+      border-bottom: 1px dashed var(--preto);
+      background: var(--amarelo);
+      font-size: .72rem;
+    }
+    .photo-diagnostics li:nth-child(even) { background: var(--ciano); }
+    .photo-diagnostics [data-status="PLACEHOLDER"] { color: #8a004d; }
+    .photo-diagnostics-baralho {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 2px dashed var(--preto);
+      font-size: .72rem;
+    }
+    .photo-diagnostics-baralho button { min-height: 38px; }
+
     .action-button:hover:not(:disabled),
     .action-button:focus-visible,
     .mute:hover,
@@ -541,8 +586,8 @@
         </div>
         <div class="window-content">
           <div class="game-grid">
-            <div class="photo-frame" id="photoFrame">
-              <img id="artistPhoto" alt="Foto borrada do artista misterioso" referrerpolicy="no-referrer">
+            <div class="photo-frame" id="photoFrame" aria-label="Foto do artista misterioso" draggable="false">
+              <canvas id="artistCanvas" aria-hidden="true"></canvas>
               <span class="photo-sticker" aria-hidden="true">✦ QUEM?</span>
             </div>
             <div class="clue-stack">
@@ -636,8 +681,8 @@
       { nome: 'Cabelinho', genero: 'Trap/Rap', alias: ['cabelinho', 'mc cabelinho', 'mccabelinho'], wiki: 'MC Cabelinho', foto: '', bio: 'Rapper e cantor carioca que cruza trap, funk e melodias de forte apelo popular.', dicas: ['O artista cresceu na zona sul do Rio de Janeiro.', 'Seu repertório aproxima o trap do funk e do rap melódico.', '“X1” é uma das faixas que o projetaram nacionalmente.'] },
       { nome: 'MC Tuto', genero: 'Funk', alias: ['mc tuto', 'mctuto'], wiki: 'MC Tuto', foto: '', bio: 'Cantor de funk paulista associado à nova geração de artistas da música de baile.', dicas: ['O artista faz parte da nova cena de funk de São Paulo.', 'Seu repertório é voltado ao funk de pista e aos ritmos dançantes.', '“Barbie” está entre suas canções populares.'] },
       { nome: 'MC PH', genero: 'Funk', alias: ['mc ph', 'mcph'], wiki: 'MC PH', foto: '', bio: 'Cantor paulista ligado ao funk de baile e às produções da cena urbana.', dicas: ['Sua música está conectada à cena dos bailes paulistanos.', 'O funk de pista e as batidas aceleradas marcam seu repertório.', '“Os Bico Tão Se Perguntando” é uma de suas faixas conhecidas.'] },
-      { nome: 'Kyan', genero: 'Trap/Rap', alias: ['kyan', 'kyan mc'], wiki: 'Kyan (rapper)', foto: '', bio: 'Rapper de São Paulo que combina trap, grime e referências da cultura urbana.', dicas: ['O artista cresceu em Praia Grande, no litoral paulista.', 'Seu som mistura trap e grime com referências brasileiras.', '“Tropa da Inglaterra” é um dos seus sucessos.'] },
-      { nome: 'Vulgo FK', genero: 'Trap/Rap', alias: ['vulgo fk', 'vulgofk'], wiki: 'Vulgo FK', foto: '', bio: 'Rapper paulista que ganhou projeção com o trap e as colaborações da cena urbana.', dicas: ['O artista é ligado à cena musical da zona sul de São Paulo.', 'Seu repertório combina trap melódico e referências de rua.', '“Ballena” ampliou seu alcance nas plataformas.'] },
+      { nome: 'Kyan', genero: 'Trap/Rap', alias: ['kyan', 'kyan mc'], wiki:'', foto: '', bio: 'Rapper de São Paulo que combina trap, grime e referências da cultura urbana.', dicas: ['O artista cresceu em Praia Grande, no litoral paulista.', 'Seu som mistura trap e grime com referências brasileiras.', '“Tropa da Inglaterra” é um dos seus sucessos.'] },
+      { nome: 'Vulgo FK', genero: 'Trap/Rap', alias: ['vulgo fk', 'vulgofk'], wiki: '', foto: '', bio: 'Rapper paulista que ganhou projeção com o trap e as colaborações da cena urbana.', dicas: ['O artista é ligado à cena musical da zona sul de São Paulo.', 'Seu repertório combina trap melódico e referências de rua.', '“Ballena” ampliou seu alcance nas plataformas.'] },
       { nome: 'Emicida', genero: 'Trap/Rap', alias: ['emicida'], wiki: 'Emicida', foto: '', bio: 'Rapper e compositor paulistano, reconhecido pela escrita e por projetos que cruzam música e cultura.', dicas: ['Construiu sua trajetória nas batalhas de improviso de São Paulo.', 'Seu trabalho une rap, samba e outras referências da música brasileira.', '“AmarElo” dá nome a um de seus projetos mais conhecidos.'] },
       { nome: 'Jão', genero: 'Pop', alias: ['jao', 'jao cantor'], wiki: 'Jão (cantor)', foto: '', bio: 'Cantor e compositor paulista de pop, conhecido por álbuns conceituais e letras confessionais.', dicas: ['O cantor começou a compartilhar composições na internet.', 'Seus álbuns exploram narrativas e diferentes fases do pop.', '“Idiota” é um de seus grandes sucessos.'] },
       { nome: 'Luísa Sonza', genero: 'Pop', alias: ['luisa sonza', 'luisasonza', 'sonza'], wiki: 'Luísa Sonza', foto: '', bio: 'Cantora e compositora gaúcha que transita pelo pop, funk e música eletrônica.', dicas: ['A artista nasceu no interior do Rio Grande do Sul.', 'Seus projetos exploram pop, funk e sonoridades eletrônicas.', '“Anaconda” é um de seus hits de grande alcance.'] },
@@ -721,6 +766,59 @@
         .replace(/&/g, ' e ').replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
     }
 
+    function colapsarLetrasRepetidas(texto) {
+      return texto.replace(/([a-z])\1+/g, '$1');
+    }
+
+    function distanciaLevenshtein(a, b) {
+      let anterior = Array.from({ length: b.length + 1 }, (_, indice) => indice);
+      for (let i = 1; i <= a.length; i++) {
+        const atual = [i];
+        for (let j = 1; j <= b.length; j++) {
+          atual[j] = Math.min(
+            atual[j - 1] + 1,
+            anterior[j] + 1,
+            anterior[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
+          );
+        }
+        anterior = atual;
+      }
+      return anterior[b.length];
+    }
+
+    function limiteEdicao(candidato) {
+      if (candidato.length <= 4) return 0;
+      if (candidato.length <= 7) return 1;
+      return 2;
+    }
+
+    function candidatosArtista(artista) {
+      return [...new Set([artista.nome, ...artista.alias]
+        .map(valor => colapsarLetrasRepetidas(normalizar(valor))))];
+    }
+
+    function palpiteAcertaArtista(palpite, artistaAtual) {
+      const entrada = colapsarLetrasRepetidas(normalizar(palpite));
+      const candidatosAtuais = candidatosArtista(artistaAtual);
+      if (candidatosAtuais.includes(entrada)) return true;
+
+      const outrosArtistas = ARTISTAS.filter(artista => artista !== artistaAtual);
+      const candidatosOutros = outrosArtistas.flatMap(artista =>
+        candidatosArtista(artista).map(candidato => ({ artista, candidato }))
+      );
+      if (candidatosOutros.some(({ candidato }) => candidato === entrada)) return false;
+
+      const atualDentroDaTolerancia = candidatosAtuais.some(candidato =>
+        distanciaLevenshtein(entrada, candidato) <= limiteEdicao(candidato)
+      );
+      if (!atualDentroDaTolerancia) return false;
+
+      const outroDentroDaTolerancia = candidatosOutros.some(({ candidato }) =>
+        distanciaLevenshtein(entrada, candidato) <= limiteEdicao(candidato)
+      );
+      return !outroDentroDaTolerancia;
+    }
+
     function escaparHTML(texto) {
       return String(texto).replace(/[&<>"']/g, caractere => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
@@ -728,6 +826,28 @@
     }
 
     const cacheFotos = new Map();
+    const statusFotos = new Map();
+    const filaFotos = [];
+    let fotosEmAndamento = 0;
+    const MAX_FOTOS_SIMULTANEAS = 5;
+
+    function executarComLimiteFoto(tarefa) {
+      return new Promise((resolve, reject) => {
+        const executar = () => {
+          fotosEmAndamento++;
+          Promise.resolve()
+            .then(tarefa)
+            .then(resolve, reject)
+            .finally(() => {
+              fotosEmAndamento--;
+              const proxima = filaFotos.shift();
+              if (proxima) proxima();
+            });
+        };
+        if (fotosEmAndamento < MAX_FOTOS_SIMULTANEAS) executar();
+        else filaFotos.push(executar);
+      });
+    }
 
     function carregarImagem(url, signal) {
       return new Promise((resolve, reject) => {
@@ -756,16 +876,159 @@
       });
     }
 
-    function gerarPlaceholder() {
-      const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480"><rect width="480" height="480" fill="#7B2CFF"/><path d="M0 0h240v240H0zM240 240h240v240H240z" fill="#00E5FF"/><circle cx="240" cy="170" r="72" fill="#FFE600" stroke="#000" stroke-width="12"/><path d="M92 440c12-108 70-160 148-160s136 52 148 160" fill="#FF2E93" stroke="#000" stroke-width="12"/><text x="240" y="215" text-anchor="middle" font-family="monospace" font-size="110" font-weight="bold" fill="#000">?</text></svg>';
+    function gerarPlaceholder(marca = '?') {
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480"><rect width="480" height="480" fill="#7B2CFF"/><path d="M0 0h240v240H0zM240 240h240v240H240z" fill="#00E5FF"/><circle cx="240" cy="170" r="72" fill="#FFE600" stroke="#000" stroke-width="12"/><path d="M92 440c12-108 70-160 148-160s136 52 148 160" fill="#FF2E93" stroke="#000" stroke-width="12"/><text x="240" y="215" text-anchor="middle" font-family="monospace" font-size="${marca.length > 1 ? 76 : 110}" font-weight="bold" fill="#000">${marca}</text></svg>`;
       return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    }
+
+    const FOTO_PLACEHOLDER = gerarPlaceholder();
+    const BARALHO_STORAGE_KEY = 'blurme_baralho';
+    const cacheImagensCanvas = new Map();
+
+    function obterImagemCanvas(url) {
+      const destino = url || FOTO_PLACEHOLDER;
+      let imagem = cacheImagensCanvas.get(destino);
+      if (!imagem) {
+        imagem = new Image();
+        imagem.decoding = 'async';
+        imagem.referrerPolicy = 'no-referrer';
+        imagem.src = destino;
+        cacheImagensCanvas.set(destino, imagem);
+      }
+      return imagem;
+    }
+
+    function prepararCanvasFoto() {
+      const canvas = el.artistCanvas;
+      if (!canvas) return;
+      const retangulo = el.photoFrame.getBoundingClientRect();
+      const escala = Math.min(window.devicePixelRatio || 1, 2);
+      const largura = Math.max(1, Math.round(retangulo.width * escala));
+      const altura = Math.max(1, Math.round(retangulo.height * escala));
+      if (canvas.width !== largura || canvas.height !== altura) {
+        canvas.width = largura;
+        canvas.height = altura;
+      }
+      canvas.style.width = `${retangulo.width}px`;
+      canvas.style.height = `${retangulo.height}px`;
+    }
+
+    function desenharFotoCanvas(url, blurPx = 0, instantaneo = false) {
+      const canvas = el.artistCanvas;
+      const contexto = canvas && canvas.getContext('2d');
+      if (!canvas || !contexto) return;
+      prepararCanvasFoto();
+      const imagem = obterImagemCanvas(url || FOTO_PLACEHOLDER);
+      const pintar = () => {
+        const largura = canvas.width;
+        const altura = canvas.height;
+        contexto.clearRect(0, 0, largura, altura);
+        contexto.imageSmoothingEnabled = true;
+        if (!imagem || (!imagem.complete && !imagem.naturalWidth)) return;
+        const escala = Math.max(largura / imagem.naturalWidth, altura / imagem.naturalHeight);
+        const drawWidth = imagem.naturalWidth * escala;
+        const drawHeight = imagem.naturalHeight * escala;
+        const x = (largura - drawWidth) / 2;
+        const y = (altura - drawHeight) / 2;
+        if ('filter' in contexto && !instantaneo) {
+          contexto.filter = `blur(${blurPx}px) contrast(120%)`;
+          contexto.drawImage(imagem, x, y, drawWidth, drawHeight);
+          contexto.filter = 'none';
+          return;
+        }
+        const mini = document.createElement('canvas');
+        const miniLadoX = Math.max(8, Math.round(largura / Math.max(blurPx * 0.8, 1))); 
+        const miniLadoY = Math.max(8, Math.round(altura / Math.max(blurPx * 0.8, 1))); 
+        mini.width = miniLadoX;
+        mini.height = miniLadoY;
+        const miniCtx = mini.getContext('2d');
+        if (!miniCtx) return;
+        miniCtx.clearRect(0, 0, mini.width, mini.height);
+        miniCtx.imageSmoothingEnabled = true;
+        miniCtx.drawImage(imagem, 0, 0, mini.width, mini.height);
+        contexto.clearRect(0, 0, largura, altura);
+        contexto.drawImage(mini, 0, 0, largura, altura);
+      };
+      if (imagem.complete) pintar();
+      else imagem.addEventListener('load', pintar, { once: true });
+    }
+
+    function lerBaralhoSalvo() {
+      try {
+        const salvo = localStorage.getItem(BARALHO_STORAGE_KEY);
+        if (!salvo) return [];
+        const nomes = JSON.parse(salvo);
+        if (!Array.isArray(nomes)) return [];
+        const porNome = new Map(ARTISTAS.map(artista => [artista.nome, artista]));
+        return nomes.map(nome => porNome.get(nome)).filter(Boolean);
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function salvarBaralho() {
+      try {
+        const nomes = estado.baralho.map(artista => artista.nome);
+        localStorage.setItem(BARALHO_STORAGE_KEY, JSON.stringify(nomes));
+      } catch (_) {}
+      try {
+        window.dispatchEvent(new CustomEvent('blurme:baralho', { detail: estado.baralho.length }));
+      } catch (_) {}
+    }
+
+    function sortearArtistasPartida() {
+      let baralho = estado.baralho.length ? estado.baralho.slice() : embaralhar(ARTISTAS.slice());
+      const partida = [];
+      while (partida.length < RODADAS && baralho.length) {
+        partida.push(baralho.shift());
+      }
+      if (partida.length < RODADAS) {
+        const extras = embaralhar(ARTISTAS.filter(artista => !partida.includes(artista) && !baralho.includes(artista)));
+        for (const artista of extras) {
+          if (partida.length >= RODADAS) break;
+          partida.push(artista);
+        }
+      }
+      if (partida.length < RODADAS) {
+        const suplentes = embaralhar(ARTISTAS.filter(artista => !partida.includes(artista)));
+        for (const artista of suplentes) {
+          if (partida.length >= RODADAS) break;
+          partida.push(artista);
+        }
+      }
+
+      let partidaFinal = partida.slice();
+      let tentativas = 0;
+      while (tentativas < 20 && partidaFinal.length === RODADAS) {
+        const contagens = new Map();
+        let valido = true;
+        for (const artista of partidaFinal) {
+          contagens.set(artista.genero, (contagens.get(artista.genero) || 0) + 1);
+          if ((contagens.get(artista.genero) || 0) > 2) {
+            valido = false;
+            break;
+          }
+        }
+        if (valido) break;
+        partidaFinal = embaralhar(partida.slice());
+        tentativas++;
+      }
+
+      const restante = baralho.filter(artista => !partidaFinal.includes(artista));
+      estado.baralho = restante.length ? embaralhar(restante) : embaralhar(ARTISTAS.slice());
+      salvarBaralho();
+      return partidaFinal.slice(0, RODADAS);
     }
 
     async function resolverFoto(artista) {
       if (cacheFotos.has(artista)) return cacheFotos.get(artista);
-      const promessa = (async () => {
+      const promessa = executarComLimiteFoto(async () => {
         if (artista.foto) {
-          try { return await carregarImagem(artista.foto); } catch (_) {}
+          try {
+            const url = await carregarImagem(artista.foto);
+            statusFotos.set(artista, 'FOTO OK');
+            return url;
+          } catch (_) {}
         }
         if (artista.wiki) {
           const controller = new AbortController();
@@ -780,7 +1043,11 @@
               const url = dados.type === 'standard' && dados.thumbnail && dados.thumbnail.source
                 ? dados.thumbnail.source : '';
               if (url) {
-                try { return await carregarImagem(url); } catch (_) {}
+                try {
+                  const imagemCarregada = await carregarImagem(url);
+                  statusFotos.set(artista, 'WIKI OK');
+                  return imagemCarregada;
+                } catch (_) {}
               }
             }
           } catch (_) {
@@ -788,10 +1055,16 @@
             clearTimeout(timeout);
           }
         }
-        return gerarPlaceholder();
-      })();
+        statusFotos.set(artista, 'PLACEHOLDER');
+        return FOTO_PLACEHOLDER;
+      });
       cacheFotos.set(artista, promessa);
       return promessa;
+    }
+
+    function obterIniciais(nome) {
+      return nome.split(/\s+/).filter(Boolean).slice(0, 2)
+        .map(parte => Array.from(parte)[0]).join('').toUpperCase();
     }
 
     function embaralhar(lista) {
@@ -820,7 +1093,15 @@
       pontos: 0,
       resultados: [],
       timer: null,
-      fotoToken: 0
+      fotoToken: 0,
+      fotoUrl: FOTO_PLACEHOLDER,
+      baralho: (() => {
+        const salvo = lerBaralhoSalvo();
+        return salvo.length ? salvo : embaralhar(ARTISTAS.slice());
+      })(),
+      blurAtual: 0,
+      blurAlvo: 0,
+      rafBlur: null
     };
 
     // RENDER
@@ -829,7 +1110,7 @@
       gameScreen: document.getElementById('gameScreen'),
       finalScreen: document.getElementById('finalScreen'),
       roundBadge: document.getElementById('roundBadge'),
-      artistPhoto: document.getElementById('artistPhoto'),
+      artistCanvas: document.getElementById('artistCanvas'),
       photoFrame: document.getElementById('photoFrame'),
       artistBio: document.getElementById('artistBio'),
       clueOne: document.getElementById('clueOne'),
@@ -867,18 +1148,41 @@
     }
 
     function definirBlur(valor, instantaneo = false) {
-      el.artistPhoto.classList.toggle('instant', instantaneo);
-      el.artistPhoto.style.filter = `blur(${valor}px) contrast(120%)`;
+      const alvo = Number.isFinite(valor) ? valor : 0;
+      estado.blurAlvo = alvo;
+      if (estado.rafBlur !== null) cancelAnimationFrame(estado.rafBlur);
+      if (instantaneo) {
+        estado.blurAtual = alvo;
+        estado.rafBlur = null;
+        desenharFotoCanvas(estado.fotoUrl || FOTO_PLACEHOLDER, alvo, true);
+        return;
+      }
+      const inicio = performance.now();
+      const origem = Number.isFinite(estado.blurAtual) ? estado.blurAtual : alvo;
+      const duracao = 400;
+      const animar = tempo => {
+        const progresso = Math.min((tempo - inicio) / duracao, 1);
+        estado.blurAtual = origem + (alvo - origem) * progresso;
+        desenharFotoCanvas(estado.fotoUrl || FOTO_PLACEHOLDER, estado.blurAtual, false);
+        if (progresso < 1) {
+          estado.rafBlur = requestAnimationFrame(animar);
+        } else {
+          estado.rafBlur = null;
+        }
+      };
+      estado.rafBlur = requestAnimationFrame(animar);
     }
 
     function atualizarFoto(artista) {
       const token = ++estado.fotoToken;
-      el.artistPhoto.alt = 'Foto borrada do artista misterioso';
-      el.artistPhoto.src = gerarPlaceholder();
-      definirBlur(BLUR_PX[estado.erros], true);
+      estado.fotoUrl = FOTO_PLACEHOLDER;
+      estado.blurAtual = BLUR_PX[estado.erros];
+      estado.blurAlvo = estado.blurAtual;
+      desenharFotoCanvas(estado.fotoUrl, estado.blurAtual, true);
       resolverFoto(artista).then(url => {
         if (token === estado.fotoToken && (estado.tela === 'JOGANDO' || estado.tela === 'TRANSICAO')) {
-          el.artistPhoto.src = url;
+          estado.fotoUrl = url || FOTO_PLACEHOLDER;
+          desenharFotoCanvas(estado.fotoUrl, estado.blurAtual, true);
         }
       });
       const proxima = estado.artistasPartida[estado.indice + 1];
@@ -929,7 +1233,8 @@
       if (estado.timer !== null) clearTimeout(estado.timer);
       estado.timer = null;
       estado.fotoToken++;
-      estado.artistasPartida = embaralhar(ARTISTAS).slice(0, RODADAS);
+      if (!estado.baralho.length) estado.baralho = embaralhar(ARTISTAS.slice());
+      estado.artistasPartida = sortearArtistasPartida();
       estado.indice = 0;
       estado.erros = 0;
       estado.tentativas = new Set();
@@ -942,7 +1247,10 @@
       estado.tela = 'TRANSICAO';
       el.guessInput.disabled = true;
       el.guessButton.disabled = true;
-      el.artistPhoto.alt = 'Foto revelada do artista';
+      if (estado.fotoUrl === FOTO_PLACEHOLDER) {
+        estado.fotoUrl = gerarPlaceholder(obterIniciais(artista.nome));
+      }
+      desenharFotoCanvas(estado.fotoUrl, 0, true);
       definirBlur(0, true);
       el.roundResult.hidden = false;
       el.roundResult.className = `result-banner ${acertou ? 'win' : 'loss'}`;
@@ -981,7 +1289,7 @@
 
       estado.tentativas.add(palpite);
       const artista = estado.artistasPartida[estado.indice];
-      const acertou = palpite === normalizar(artista.nome) || artista.alias.some(alias => palpite === normalizar(alias));
+      const acertou = palpiteAcertaArtista(palpite, artista);
       tocarClique();
       if (acertou) {
         const pontos = Math.max(1, MAX_ERROS - estado.erros);
@@ -1047,6 +1355,9 @@
       enviarPalpite();
     });
 
+    el.photoFrame.addEventListener('contextmenu', evento => evento.preventDefault());
+    el.photoFrame.addEventListener('dragstart', evento => evento.preventDefault());
+
     document.getElementById('againButton').addEventListener('click', () => {
       iniciarAudio();
       tocarClique();
@@ -1061,6 +1372,72 @@
       el.muteButton.setAttribute('aria-pressed', String(!somAtivo));
       if (somAtivo) tocarClique();
     });
+
+    function iniciarDiagnosticoFotos() {
+      if (new URLSearchParams(window.location.search).get('debug') !== '1') return;
+
+      const painel = document.createElement('section');
+      painel.className = 'photo-diagnostics';
+      painel.setAttribute('aria-labelledby', 'photoDiagnosticsTitle');
+      const titulo = document.createElement('h2');
+      titulo.id = 'photoDiagnosticsTitle';
+      titulo.textContent = 'DIAGNÓSTICO DE FOTOS';
+      const descricao = document.createElement('p');
+      descricao.textContent = 'TESTE DE ATÉ 5 ARTISTAS POR VEZ.';
+      const lista = document.createElement('ul');
+      const linhas = new Map();
+
+      ARTISTAS.forEach(artista => {
+        const linha = document.createElement('li');
+        const nome = document.createElement('span');
+        nome.textContent = artista.nome;
+        const status = document.createElement('span');
+        status.textContent = 'AGUARDANDO';
+        status.setAttribute('aria-label', 'Status da foto');
+        linha.append(nome, status);
+        lista.append(linha);
+        linhas.set(artista, status);
+      });
+
+      const infoBaralho = document.createElement('div');
+      infoBaralho.className = 'photo-diagnostics-baralho';
+      const contadorBaralho = document.createElement('strong');
+      contadorBaralho.textContent = `ARTISTAS RESTANTES NO BARALHO: ${estado.baralho.length}`;
+      const botaoReset = document.createElement('button');
+      botaoReset.type = 'button';
+      botaoReset.className = 'action-button';
+      botaoReset.textContent = 'REINICIAR BARALHO';
+      botaoReset.addEventListener('click', () => {
+        estado.baralho = embaralhar(ARTISTAS.slice());
+        salvarBaralho();
+        contadorBaralho.textContent = `ARTISTAS RESTANTES NO BARALHO: ${estado.baralho.length}`;
+      });
+      infoBaralho.append(contadorBaralho, botaoReset);
+      painel.append(titulo, descricao, lista, infoBaralho);
+      document.querySelector('.app').insertAdjacentElement('afterend', painel);
+
+      const atualizarContadorBaralho = () => {
+        contadorBaralho.textContent = `ARTISTAS RESTANTES NO BARALHO: ${estado.baralho.length}`;
+      };
+      window.addEventListener('blurme:baralho', atualizarContadorBaralho);
+
+      let proxima = 0;
+      const trabalhadores = Array.from(
+        { length: Math.min(MAX_FOTOS_SIMULTANEAS, ARTISTAS.length) },
+        async () => {
+          while (proxima < ARTISTAS.length) {
+            const artista = ARTISTAS[proxima++];
+            linhas.get(artista).textContent = 'TESTANDO...';
+            await resolverFoto(artista);
+            linhas.get(artista).textContent = statusFotos.get(artista);
+            linhas.get(artista).dataset.status = statusFotos.get(artista);
+          }
+        }
+      );
+      Promise.all(trabalhadores).catch(erro => {
+        console.error('[BLUR ME] Falha no diagnóstico de fotos.', erro);
+      });
+    }
 
     function iniciarRastroMouse() {
       const canvas = document.getElementById('mouseTrail');
@@ -1154,6 +1531,7 @@
     }
 
     iniciarRastroMouse();
+    iniciarDiagnosticoFotos();
     validarBanco();
   </script>
 </body>
