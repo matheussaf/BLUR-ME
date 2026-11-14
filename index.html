@@ -457,6 +457,7 @@
     .photo-diagnostics li {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       gap: 12px;
       padding: 6px 8px;
       border-bottom: 1px dashed var(--preto);
@@ -464,6 +465,30 @@
       font-size: .72rem;
     }
     .photo-diagnostics li:nth-child(even) { background: var(--ciano); }
+    .photo-diagnostics-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .photo-diagnostics-meta img {
+      display: block;
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--preto);
+      object-fit: cover;
+      background: var(--branco);
+    }
+    .photo-diagnostics-title {
+      display: block;
+      max-width: 220px;
+      font-size: .6rem;
+      text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
     .photo-diagnostics [data-status="PLACEHOLDER"] { color: #8a004d; }
     .photo-diagnostics-baralho {
       display: flex;
@@ -653,6 +678,8 @@
     const DELAY_ACERTO_MS = 2000;
     const DELAY_DERROTA_MS = 3000;
     const API_WIKI = 'https://pt.wikipedia.org/api/rest_v1/page/summary/';
+    const API_WIKI_SEARCH_PT = 'https://pt.wikipedia.org/w/api.php';
+    const API_WIKI_SEARCH_EN = 'https://en.wikipedia.org/w/api.php';
     const FOTO_TIMEOUT_MS = 6000;
 
     // ARTISTAS
@@ -766,6 +793,13 @@
         .replace(/&/g, ' e ').replace(/[^a-z0-9\s]/g, '').replace(/\s+/g, ' ').trim();
     }
 
+    function paginaWikipediaCorrespondeAoArtista(titulo, artista) {
+      const tituloNormalizado = normalizar(titulo);
+      const nomeNormalizado = normalizar(artista?.nome || '');
+      if (!tituloNormalizado || !nomeNormalizado) return false;
+      return tituloNormalizado.includes(nomeNormalizado) || nomeNormalizado.includes(tituloNormalizado);
+    }
+
     function colapsarLetrasRepetidas(texto) {
       return texto.replace(/([a-z])\1+/g, '$1');
     }
@@ -827,6 +861,7 @@
 
     const cacheFotos = new Map();
     const statusFotos = new Map();
+    const detalhesFotos = new Map();
     const filaFotos = [];
     let fotosEmAndamento = 0;
     const MAX_FOTOS_SIMULTANEAS = 5;
@@ -874,6 +909,44 @@
         imagem.referrerPolicy = 'no-referrer';
         imagem.src = url;
       });
+    }
+
+    async function buscarFotoWikipedia(artista, urlApi, etapa) {
+      const params = new URLSearchParams({
+        action: 'query',
+        generator: 'search',
+        gsrsearch: `${artista.nome} cantor`,
+        gsrlimit: '1',
+        prop: 'pageimages',
+        piprop: 'thumbnail',
+        pithumbsize: '600',
+        format: 'json',
+        origin: '*'
+      });
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), FOTO_TIMEOUT_MS);
+      try {
+        const resposta = await fetch(`${urlApi}?${params.toString()}`, {
+          signal: controller.signal,
+          headers: { Accept: 'application/json' }
+        });
+        if (!resposta.ok) return { motivo: 'sem resultado', etapa, titulo: '' };
+        const dados = await resposta.json();
+        const paginas = Object.values(dados?.query?.pages || {});
+        const pagina = paginas[0];
+        if (!pagina) return { motivo: 'sem resultado', etapa, titulo: '' };
+        const titulo = pagina.title || '';
+        const thumbnail = pagina.thumbnail && pagina.thumbnail.source ? pagina.thumbnail.source : '';
+        if (!thumbnail) return { motivo: 'sem foto no artigo', etapa, titulo };
+        if (!paginaWikipediaCorrespondeAoArtista(titulo, artista)) {
+          return { motivo: 'sem resultado', etapa, titulo };
+        }
+        return { url: thumbnail, titulo, etapa };
+      } catch (_) {
+        return { motivo: 'sem resultado', etapa, titulo: '' };
+      } finally {
+        clearTimeout(timeout);
+      }
     }
 
     function gerarPlaceholder(marca = '?') {
@@ -1023,13 +1096,20 @@
     async function resolverFoto(artista) {
       if (cacheFotos.has(artista)) return cacheFotos.get(artista);
       const promessa = executarComLimiteFoto(async () => {
+        const registrarDetalhe = (status, titulo = '', thumbnail = '') => {
+          statusFotos.set(artista, status);
+          detalhesFotos.set(artista, { status, titulo, thumbnail });
+        };
+
         if (artista.foto) {
           try {
             const url = await carregarImagem(artista.foto);
-            statusFotos.set(artista, 'FOTO OK');
+            registrarDetalhe('FOTO', artista.nome, url);
             return url;
           } catch (_) {}
         }
+
+        let ultimoMotivo = artista.wiki ? '404' : 'wiki vazio';
         if (artista.wiki) {
           const controller = new AbortController();
           const timeout = setTimeout(() => controller.abort(), FOTO_TIMEOUT_MS);
@@ -1042,20 +1122,50 @@
               const dados = await resposta.json();
               const url = dados.type === 'standard' && dados.thumbnail && dados.thumbnail.source
                 ? dados.thumbnail.source : '';
+              const titulo = dados.title || artista.nome;
               if (url) {
                 try {
                   const imagemCarregada = await carregarImagem(url);
-                  statusFotos.set(artista, 'WIKI OK');
+                  registrarDetalhe('WIKI', titulo, url);
                   return imagemCarregada;
-                } catch (_) {}
+                } catch (_) {
+                  ultimoMotivo = 'sem foto no artigo';
+                }
+              } else {
+                ultimoMotivo = 'sem foto no artigo';
               }
+            } else {
+              ultimoMotivo = '404';
             }
           } catch (_) {
+            ultimoMotivo = '404';
           } finally {
             clearTimeout(timeout);
           }
         }
-        statusFotos.set(artista, 'PLACEHOLDER');
+
+        const buscas = [
+          { url: API_WIKI_SEARCH_PT, etapa: 'BUSCA PT' },
+          { url: API_WIKI_SEARCH_EN, etapa: 'BUSCA EN' }
+        ];
+
+        for (const busca of buscas) {
+          const resultado = await buscarFotoWikipedia(artista, busca.url, busca.etapa);
+          if (resultado && resultado.url) {
+            try {
+              const imagemCarregada = await carregarImagem(resultado.url);
+              registrarDetalhe(busca.etapa, resultado.titulo, resultado.url);
+              return imagemCarregada;
+            } catch (_) {
+              ultimoMotivo = 'sem foto no artigo';
+            }
+          }
+          if (resultado && resultado.motivo) {
+            ultimoMotivo = resultado.motivo;
+          }
+        }
+
+        registrarDetalhe(ultimoMotivo || 'sem resultado', '', '');
         return FOTO_PLACEHOLDER;
       });
       cacheFotos.set(artista, promessa);
@@ -1391,12 +1501,28 @@
         const linha = document.createElement('li');
         const nome = document.createElement('span');
         nome.textContent = artista.nome;
+
+        const meta = document.createElement('div');
+        meta.className = 'photo-diagnostics-meta';
+
         const status = document.createElement('span');
         status.textContent = 'AGUARDANDO';
         status.setAttribute('aria-label', 'Status da foto');
-        linha.append(nome, status);
+
+        const miniatura = document.createElement('img');
+        miniatura.alt = `Miniatura de ${artista.nome}`;
+        miniatura.width = 40;
+        miniatura.height = 40;
+        miniatura.style.display = 'none';
+
+        const tituloPagina = document.createElement('small');
+        tituloPagina.className = 'photo-diagnostics-title';
+        tituloPagina.textContent = '';
+
+        linha.append(nome, meta);
+        meta.append(status, miniatura, tituloPagina);
         lista.append(linha);
-        linhas.set(artista, status);
+        linhas.set(artista, { linha, status, miniatura, tituloPagina });
       });
 
       const infoBaralho = document.createElement('div');
@@ -1421,16 +1547,37 @@
       };
       window.addEventListener('blurme:baralho', atualizarContadorBaralho);
 
+      const atualizarLinhaDiagnostico = artista => {
+        const linha = linhas.get(artista);
+        if (!linha) return;
+        const detalhe = detalhesFotos.get(artista) || { status: statusFotos.get(artista) || 'AGUARDANDO', titulo: '', thumbnail: '' };
+        linha.status.textContent = detalhe.status || 'AGUARDANDO';
+        linha.tituloPagina.textContent = detalhe.titulo || '';
+        if (detalhe.thumbnail) {
+          linha.miniatura.src = detalhe.thumbnail;
+          linha.miniatura.style.display = 'block';
+        } else {
+          linha.miniatura.removeAttribute('src');
+          linha.miniatura.style.display = 'none';
+        }
+        linha.linha.dataset.status = detalhe.status || 'AGUARDANDO';
+      };
+
       let proxima = 0;
       const trabalhadores = Array.from(
         { length: Math.min(MAX_FOTOS_SIMULTANEAS, ARTISTAS.length) },
         async () => {
           while (proxima < ARTISTAS.length) {
             const artista = ARTISTAS[proxima++];
-            linhas.get(artista).textContent = 'TESTANDO...';
+            const linha = linhas.get(artista);
+            if (linha) {
+              linha.status.textContent = 'TESTANDO...';
+              linha.tituloPagina.textContent = '';
+              linha.miniatura.removeAttribute('src');
+              linha.miniatura.style.display = 'none';
+            }
             await resolverFoto(artista);
-            linhas.get(artista).textContent = statusFotos.get(artista);
-            linhas.get(artista).dataset.status = statusFotos.get(artista);
+            atualizarLinhaDiagnostico(artista);
           }
         }
       );
