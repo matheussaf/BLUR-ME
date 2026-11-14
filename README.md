@@ -51,5 +51,6 @@ A cada tentativa errada, o filtro de `blur` diminui progressivamente e novas dic
 
 <p align="center">
   <b>Gameplay em Ação</b><br><br>
-  <img src="COLE_AQUI_O_LINK_DA_SEGUNDA_IMAGEM" width="750" alt="Gameplay do Jogo Blur Me" />
+  <img src="<img width="1919" height="958" alt="image" src="https://github.com/user-attachments/assets/b4b05adc-2e50-48d6-9384-f0d3345b52c6" />
+" width="750" alt="Gameplay do Jogo Blur Me" />
 </p>
