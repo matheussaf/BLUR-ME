@@ -22,7 +22,7 @@
 
 ## Sobre o Jogo
 
-O **BLUR ME** é um jogo interativo de adivinhação (Single Page Application) onde o objetivo é descobrir qual artista brasileiro está escondido por trás da foto desfocada. 
+O **BLUR ME** é um jogo interativo de adivinhação onde o objetivo é descobrir qual artista brasileiro está escondido por trás da foto desfocada. 
 
 A cada tentativa errada, o filtro de `blur` diminui progressivamente e novas dicas inspiradas em recortes de jornal são liberadas. Mas cuidado: você tem apenas **3 vidas por rodada** e a partida dura **5 rodadas**!
 
@@ -32,10 +32,10 @@ A cada tentativa errada, o filtro de `blur` diminui progressivamente e novas dic
 
 - **Estética Y2K / Brutalismo Web:** Design inspirado na cultura pop dos anos 2000, com referências visuais a zines, colagens, sombras secas estilo sticker, fontes monospaced e modo escuro customizável.
 - **Banco com 50 Artistas Brasileiros:** Cobrindo os gêneros mais ouvidos da atualidade (Sertanejo, Funk, Trap/Rap, MPB, Pop, Pagode, Piseiro, Rock e Indie).
-- **Validação Inteligente (Fuzzy Matching):** Tolerância a pequenos erros de digitação (acentuação, letras dobradas ou pequenos deslizes, ex: aceita *"pablo vitar"* para *"Pabllo Vittar"*).
+- **Validação Inteligente (Fuzzy Matching):** Tolerância a pequenos erros de digitação (acentuação, letras dobradas ou pequenos deslizes).
 - **Pipeline de Imagens Dinâmico:** Integração com a API REST da Wikipédia + Wikimedia Commons e fallback automático via SVG caso a imagem falhe.
-- **Efeitos Sonoros Retrô (Web Audio API):** Sons sintetizados diretamente por código via navegador (graves 808 para erros e arpejos 8-bit para acertos), dispensando arquivos de áudio externos.
-- **Mural de Recados:** Campo de comentários integrado utilizando `localStorage` para visitantes deixarem seus palpites e feedbacks.
+- **Efeitos Sonoros Retrô (Web Audio API):** Sons sintetizados diretamente por código via navegador, dispensando arquivos de áudio externos.
+- **Mural de Recados:** Campo de comentários integrado utilizando `localStorage` para visitantes deixarem seus palpites.
 - **100% Responsivo:** Adaptado para rodar perfeitamente em dispositivos móveis e desktops.
 
 ---
@@ -44,13 +44,8 @@ A cada tentativa errada, o filtro de `blur` diminui progressivamente e novas dic
 
 <p align="center">
   <b>Tela Inicial</b><br><br>
-  <img src="https://github.com/user-attachments/assets/5781afd4-32c0-4fca-adb1-2db330b4dbe4" width="750" alt="Tela Inicial do Jogo Blur Me" />
+  <img src="https://github.com/user-attachments/assets/5781afd4-32c0-4fca-adb1-2db330b4dbe4" width="750" alt="Tela Inicial" />
 </p>
 
 <br>
 
-<p align="center">
-  <b>Gameplay em Ação</b><br><br>
-  <img src="<img width="1919" height="958" alt="image" src="https://github.com/user-attachments/assets/b4b05adc-2e50-48d6-9384-f0d3345b52c6" />
-" width="750" alt="Gameplay do Jogo Blur Me" />
-</p>
