@@ -36,6 +36,11 @@ A cada tentativa errada, o filtro de `blur` diminui progressivamente e novas dic
 
 ##  Demonstração Visuais
 
+<img width="1919" height="958" alt="image" src="https://github.com/user-attachments/assets/5781afd4-32c0-4fca-adb1-2db330b4dbe4" />
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/seu-codigo-aqui" width="600" alt="Print do Jogo Blur Me">
+</p>
+
 ```text
 
-<img width="1919" height="958" alt="image" src="https://github.com/user-attachments/assets/397442f9-ecd9-44c8-8148-fcb9acc9e5ab" />
