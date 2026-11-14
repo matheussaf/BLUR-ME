@@ -9,14 +9,20 @@
 
 <p align="center">
   <b>Um jogo web retrô de adivinhação musical inspirado na estética dos anos 2000, fã-clubes antigos e zines urbanos.</b><br>
-  <i>Testes seus conhecimentos sobre os 50 maiores artistas brasileiros da atualidade!</i>
+  <i>Teste seus conhecimentos sobre os 50 maiores artistas brasileiros da atualidade!</i>
+</p>
+
+<p align="center">
+  <a href="https://matheussaf.github.io/BLUR-ME/">
+    <img src="https://img.shields.io/badge/🕹️_JOGAR_AGORA-39ff14?style=for-the-badge" alt="Jogar Agora" />
+  </a>
 </p>
 
 ---
 
-##  Sobre o Jogo
+## Sobre o Jogo
 
-O **BLUR ME** é um jogo interativo de adivinhação (Single Page Application) onde o objetivo é descobrir qual artista brasileiro está escondido por trás da foto desfocada. 
+O **BLUR ME** é um jogo interativo de adivinhação onde o objetivo é descobrir qual artista brasileiro está escondido por trás da foto desfocada. 
 
 A cada tentativa errada, o filtro de `blur` diminui progressivamente e novas dicas inspiradas em recortes de jornal são liberadas. Mas cuidado: você tem apenas **3 vidas por rodada** e a partida dura **5 rodadas**!
 
@@ -24,37 +30,22 @@ A cada tentativa errada, o filtro de `blur` diminui progressivamente e novas dic
 
 ## ✨ Destaques & Funcionalidades
 
--  **Estética Y2K / Brutalismo Web:** Design inspirado na cultura pop dos anos 2000, com referências visuais a zines, colagens, sombras secas estilo sticker, fontes monospaced e modo escuro customizável.
--  **Banco com 50 Artistas Brasileiros:** Cobrindo os gêneros mais ouvidos da atualidade (Sertanejo, Funk, Trap/Rap, MPB, Pop, Pagode, Piseiro, Rock e Indie).
--  **Validação Inteligente (Fuzzy Matching):** Tolerância a pequenos erros de digitação (acentuação, letras dobradas ou pequenos deslizes, ex: aceita *"pablo vitar"* para *"Pabllo Vittar"*).
--  **Pipeline de Imagens Dinâmico:** Integração com a API REST da Wikipédia + Wikimedia Commons e fallback automático via SVG caso a imagem falhe.
--  **Efeitos Sonoros Retrô (Web Audio API):** Sons sintetizados diretamente por código via navegador (graves 808 para erros e arpejos 8-bit para acertos), dispensando arquivos de áudio externos.
--  **Mural de Recados:** Campo de comentários integrado utilizando `localStorage` para visitantes deixarem seus palpites e feedbacks.
--  **100% Responsivo:** Adaptado para rodar perfeitamente em dispositivos móveis e desktops.
+- **Estética Y2K / Brutalismo Web:** Design inspirado na cultura pop dos anos 2000, com referências visuais a zines, colagens, sombras secas estilo sticker, fontes monospaced e modo escuro customizável.
+- **Banco com 50 Artistas Brasileiros:** Cobrindo os gêneros mais ouvidos da atualidade (Sertanejo, Funk, Trap/Rap, MPB, Pop, Pagode, Piseiro, Rock e Indie).
+- **Validação Inteligente (Fuzzy Matching):** Tolerância a pequenos erros de digitação (acentuação, letras dobradas ou pequenos deslizes).
+- **Pipeline de Imagens Dinâmico:** Integração com a API REST da Wikipédia + Wikimedia Commons e fallback automático via SVG caso a imagem falhe.
+- **Efeitos Sonoros Retrô (Web Audio API):** Sons sintetizados diretamente por código via navegador, dispensando arquivos de áudio externos.
+- **Mural de Recados:** Campo de comentários integrado utilizando `localStorage` para visitantes deixarem seus palpites.
+- **100% Responsivo:** Adaptado para rodar perfeitamente em dispositivos móveis e desktops.
 
 ---
 
-##  Demonstração Visuais
+## 📸 Demonstração Visual
 
-```text
-+-------------------------------------------------------------------+
-| [★ BLUR ME // Y2K ZINE ★]                           [ SOM: ON]   |
-+-------------------------------------------------------------------+
-|                                                                   |
-|   +-----------------------------------------------------------+   |
-|   |  QUEM É ESSE ARTISTA?                           [ _ ] [X] |   |
-|   +-----------------------------------------------------------+   |
-|   |  +---------------------+  +----------------------------+  |   |
-|   |  |                     |  | RECORTE DE BIO             |  |   |
-|   |  |   [ FOTO BORRADA ]  |  | "CANTOR PAULISTA DE..."    |  |   |
-|   |  |     (BLUR 20PX)     |  +----------------------------+  |   |
-|   |  |                     |  | DICA 1: NASCEU NO ABC...   |  |   |
-|   |  +---------------------+  +----------------------------+  |   |
-|   |                           | ▒▒▒ DICA 2 BLOQUEADA ▒▒▒   |  |   |
-|   |   DIGITE SEU PALPITE:     +----------------------------+  |   |
-|   |   [_______________] [ CHUTAR ]                            |   |
-|   |                                                           |   |
-|   |   VIDAS: ♥ ♥ ♥                                PLACAR: 0/15|   |
-|   +-----------------------------------------------------------+   |
-|                                                                   |
-+-------------------------------------------------------------------+
+<p align="center">
+  <b>Tela Inicial</b><br><br>
+  <img src="https://github.com/user-attachments/assets/5781afd4-32c0-4fca-adb1-2db330b4dbe4" width="750" alt="Tela Inicial" />
+</p>
+
+<br>
+
